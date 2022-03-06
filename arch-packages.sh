@@ -3,7 +3,7 @@
 read -p "The drive must already be partitioned and mounted to /mnt before you continue. The EFI partition must also be mounted to /efi in the chroot (/mnt/efi); you will have to create this directory. This script will fully configure everything to my standards, minus installing any desktop environment or window manager. Ready to continue? (y/N) " choice
 case "$choice" in
 	y|Y) pacman --noconfirm -Sy; pacstrap /mnt base linux linux-firmware base-devel vim wget curl tmux git neofetch ranger dhcpcd pipewire pipewire-alsa pipewire-pulse pipewire-jack xorg && ( echo "Base packages successfully installed!" ) || ( echo "Failed to install base packages. Aborting..."; exit 1 );;
-	*) echo "Aborting..."; exit;;
+.	*) echo "Aborting..."; exit;;
 esac
 
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -115,7 +115,7 @@ case "$userchoice" in
 			read -p "Enter a username: " unchoice;
 			case "$unchoice" in
 				"") echo "Entry cannot be blank."; continue;;
-				*) useradd $unchoice && ( passwd $unchoice && ( break ) || ( echo "Password failed."; continue ) ) || ( echo "User failed to add."; continue );;
+				*) useradd -m -G wheel $unchoice && ( passwd $unchoice && ( break ) || ( echo "Password failed."; continue ) ) || ( echo "User failed to add."; continue );;
 			esac
 		done;;
 esac
@@ -147,7 +147,7 @@ exit 0
 EOF
 
 chmod +x /mnt/arch-packages-chroot.sh
-arch-chroot ./arch-packages-chroot.sh
+arch-chroot /mnt ./arch-packages-chroot.sh
 rm /mnt/arch-packages-chroot.sh
 echo "Installation successful! You may now reboot into the system."
 exit 0
