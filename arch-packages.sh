@@ -91,9 +91,6 @@ do
 	esac
 done
 
-#Install yay
-echo "Installing yay..."; git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay
-
 #Ask if the user wants to install sudo or doas
 while :
 do
@@ -117,9 +114,11 @@ case "$userchoice" in
 			read -p "Enter a username: " unchoice;
 			case "$unchoice" in
 				"") echo "Entry cannot be blank."; continue;;
-				*) useradd -m -G wheel $unchoice && ( passwd $unchoice && ( break ) || ( echo "Password failed."; continue ) ) || ( echo "User failed to add."; continue );;
+				*) useradd -m -G wheel $unchoice && ( passwd $unchoice && break || echo "Password failed."; continue ) || ( echo "User failed to add."; continue );;
 			esac
-		done;;
+		done
+		#Install yay
+		su $unchoice && echo "Installing yay..." && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay; exit;;
 esac
 
 #Install bootloader
