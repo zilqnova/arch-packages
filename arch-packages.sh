@@ -11,11 +11,12 @@ genfstab -U /mnt >> /mnt/etc/fstab
 #Create the rest of the script in the arch-chroot
 cat >/mnt/arch-packages-chroot.sh <<'EOF'
 #!/bin/bash
-#Sync pacman
-pacman --noconfirm -Sy
 
 #Enable multilib support
 echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+
+#Sync pacman
+pacman --noconfirm -Sy
 
 #Set timezone to New York (change as desired)
 ln -sf /usr/share/zoneinfo/America/New_York
@@ -36,14 +37,14 @@ done
 
 #Enable Network
 systemctl enable dhcpcd.service
-read -p "Do you want to enable Wi-Fi? (Y/n)" networkchoice
+read -p "Do you want to enable Wi-Fi? (Y/n) " networkchoice
 case "$networkchoice" in
 	n|N) :;;
 	*) echo "Enabling NetworkManager..."; pacman --noconfirm -S networkmanager && systemctl enable NetworkManager.service;;
 esac
 
 #Enable Bluetooth
-read -p "Do you want to enable Bluetooth? (Y/n)" btchoice
+read -p "Do you want to enable Bluetooth? (Y/n) " btchoice
 case "$btchoice" in
 	n|N) :;;
 	*) echo "Enabling Bluetooth..."; pacman --noconfirm -S bluez bluez-utils && systemctl enable bluetooth.service;;
@@ -52,12 +53,12 @@ esac
 #Install GPU drivers
 while :
 do
-	read -p "What type of graphics card are you using? (amd/intel/nvidia/NONE)" graphicschoice
+	read -p "What type of graphics card are you using? (amd/intel/nvidia/NONE) " graphicschoice
 	case "$graphicschoice" in
 		amd|AMD|Amd) echo "Installing AMD drivers..."; 
 			while :
 			do
-				read -p "AMDGPU or ATI? (AMDGPU/ATI)" archichoice
+				read -p "AMDGPU or ATI? (AMDGPU/ATI) " archichoice
 				case "$archichoice" in
 					amdgpu|AMDGPU) echo "AMDGPU installing..."; pacman --noconfirm -S xf86-video-amdgpu mesa lib32-mesa && ( break ) || ( exit 1 );;
 					ati|ATI) echo "ATI installing..."; pacman --noconfirm -S mesa xf86-video-ati lib32-mesa mesa-vdpau lib32-mesa-vdpau && ( break ) || ( exit 1 );;
@@ -68,7 +69,7 @@ do
 		nvidia|NVIDIA|Nvidia|NVidia) echo "Installing NVidia drivers...";
 			while :
 			do
-				read -p "Open Source or Proprietary (open/proprietary)" nvchoice
+				read -p "Open Source or Proprietary (open/proprietary) " nvchoice
 				case "$nvchoice" in
 					open) pacman --noconfirm -S xf86-video-nouveau mesa lib32-mesa && ( break ) || ( exit 1 );;
 					proprietary) echo "Please follow the installation guide upon reboot to install proprietary drivers."; break;;
@@ -81,7 +82,7 @@ done
 #Enable microcode updates
 while :
 do
-	read -p "What type of CPU are you using? (amd/intel)" cpuchoice
+	read -p "What type of CPU are you using? (amd/intel) " cpuchoice
 	case "$cpuchoice" in
 		amd|AMD|Amd) echo "Installing AMD Microcode updates..."; pacman --noconfirm -S amd-ucode && break;;
 		intel|INTEL|Intel) echo "Installing Intel Microcode updates..."; pacman --noconfirm -S intel-ucode && break;;
@@ -107,7 +108,7 @@ done
 passwd
 
 #Create a new user
-read -p "Would you like to create a user? (Y/n)" userchoice
+read -p "Would you like to create a user? (Y/n) " userchoice
 case "$userchoice" in
 	n|N) :;;
 	*) while :;
