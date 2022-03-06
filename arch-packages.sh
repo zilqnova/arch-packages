@@ -19,7 +19,7 @@ echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 pacman --noconfirm -Sy
 
 #Set timezone to New York (change as desired)
-ln -sf /usr/share/zoneinfo/America/New_York
+ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 hwclock --systohc
 
 #Set locale to en_US.UTF-8 UTF-8
