@@ -106,7 +106,7 @@ case "$userchoice" in
 			read -p "Enter a username: " unchoice;
 			case "$unchoice" in
 				"") echo "Entry cannot be blank."; continue;;
-				*) useradd -m -G wheel $unchoice && ( passwd $unchoice ) || ( echo "User failed to add."; continue );;
+				*) useradd -m -s $(which bash) -G wheel $unchoice && ( passwd $unchoice ) || ( echo "User failed to add."; continue );;
 			esac
 			break
 		done
