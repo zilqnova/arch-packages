@@ -7,7 +7,7 @@ echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 pacman --noconfirm -Sy
 
 #Allow users to choose sudo later
-pacman -R sudo
+pacman --noconfirm -R sudo
 
 #Set timezone to New York (change as desired)
 ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
