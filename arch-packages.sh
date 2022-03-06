@@ -1,6 +1,6 @@
 #!/bin/bash
 #Installs my base packages (yes, including neofetch)
-read -p "The drive must already be partitioned and mounted to /mnt before you continue. The EFI partition must also be mounted to /efi in the chroot (/mnt/efi); you will have to create this directory. This script will fully configure everything to my standards, minus installing any desktop environment or window manager. Ready to continue? (y/N) " choice
+read -p "The drive must already be partitioned and mounted to /mnt before you continue. The EFI partition must also be mounted to /efi in the chroot (/mnt/efi); you will have to create this directory. This script will fully configure everything to my standards, minus installing any desktop environment or window manager. You will also have to install your own AUR helper. Ready to continue? (y/N) " choice
 case "$choice" in
 	y|Y) pacman --noconfirm -Sy; pacstrap /mnt base linux linux-firmware base-devel vim wget curl tmux git neofetch ranger dhcpcd pipewire pipewire-alsa pipewire-pulse pipewire-jack xorg && ( echo "Base packages successfully installed!" ) || ( echo "Failed to install base packages. Aborting..."; exit 1 );;
 	*) echo "Aborting..."; exit;;
@@ -118,14 +118,7 @@ case "$userchoice" in
 				*) useradd -m -G wheel $unchoice && ( passwd $unchoice ) || ( echo "User failed to add."; continue );;
 			esac
 			break
-		done
-		#Install yay
-		cat >/home/$unchoice/yay.sh <<'EOFYAY'
-echo "Installing yay..." && cd ~ && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -sri && cd .. && rm -rf yay && exit 0
-EOFYAY
-		chmod +x /home/$unchoice/yay.sh
-		su $unchoice -c /home/$unchoice/yay.sh
-		rm /home/$unchoice/yay.sh;;
+		done;;
 esac
 
 #Install bootloader
