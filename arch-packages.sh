@@ -75,6 +75,7 @@ do
 					proprietary) echo "Please follow the installation guide upon reboot to install proprietary drivers."; break;;
 				esac
 			done;;
+		none|NONE|None) break;;
 		*) continue;;
 	esac
 done
