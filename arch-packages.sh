@@ -121,7 +121,7 @@ case "$userchoice" in
 		done
 		#Install yay
 		cat >/home/$unchoice/yay.sh <<'EOFYAY'
-echo "Installing yay..." && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -sri && cd .. && rm -rf yay && exit 0
+echo "Installing yay..." && cd ~ && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -sri && cd .. && rm -rf yay && exit 0
 EOFYAY
 		chmod +x /home/$unchoice/yay.sh
 		su $unchoice -c /home/$unchoice/yay.sh
