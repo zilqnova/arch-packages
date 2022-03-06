@@ -103,6 +103,7 @@ do
 done
 
 #Set the root password
+echo "Set the root password:"
 passwd
 
 #Create a new user
@@ -114,11 +115,11 @@ case "$userchoice" in
 			read -p "Enter a username: " unchoice;
 			case "$unchoice" in
 				"") echo "Entry cannot be blank."; continue;;
-				*) useradd -m -G wheel $unchoice && ( passwd $unchoice && break || echo "Password failed."; continue ) || ( echo "User failed to add."; continue );;
+				*) useradd -m -G wheel $unchoice && ( passwd $unchoice ) || ( echo "User failed to add."; continue );;
 			esac
 		done
 		#Install yay
-		su $unchoice && echo "Installing yay..." && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay; exit;;
+		su $unchoice && echo "Installing yay..." && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay && exit;;
 esac
 
 #Install bootloader
