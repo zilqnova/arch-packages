@@ -96,8 +96,8 @@ while :
 do
 	read -p "Which would you like to install: sudo or doas? (sudo/doas) " sudochoice
 	case "$sudochoice" in
-		sudo) pacman --noconfirm -S sudo; break;;
-		doas) pacman --noconfirm -S doas; break;;
+		sudo) pacman --noconfirm -S sudo; visudo; break;;
+		doas) pacman --noconfirm -S doas; echo "permit :wheel" > /etc/doas.conf; break;;
 		*) echo "Please select either sudo or doas. Alternatively, press Ctrl+C to exit the script."; continue;;
 	esac
 done
@@ -120,7 +120,12 @@ case "$userchoice" in
 			break
 		done
 		#Install yay
-		su $unchoice && echo "Installing yay..." && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay && exit;;
+		cat >/home/$unchoice/yay.sh <<'EOFYAY'
+echo "Installing yay..." && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -sri && cd .. && rm -rf yay && exit 0
+EOFYAY
+		chmod +x /home/$unchoice/yay.sh
+		su $unchoice -c /home/$unchoice/yay.sh
+		rm /home/$unchoice/yay.sh;;
 esac
 
 #Install bootloader
