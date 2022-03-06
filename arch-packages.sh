@@ -117,6 +117,7 @@ case "$userchoice" in
 				"") echo "Entry cannot be blank."; continue;;
 				*) useradd -m -G wheel $unchoice && ( passwd $unchoice ) || ( echo "User failed to add."; continue );;
 			esac
+			break
 		done
 		#Install yay
 		su $unchoice && echo "Installing yay..." && git clone https://aur.archlinux.org/yay.git && cd yay && makepkg -si && cd .. && rm -rf yay && exit;;
