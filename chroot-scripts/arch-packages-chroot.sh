@@ -23,7 +23,7 @@ echo "en_US.UTF8 UTF-8" > /etc/locale.gen && locale-gen && touch /etc/locale.con
 
 mkhostname () {
 #Create the hostname file
-while :
+while true
 do
 	read -p "Enter the system's hostname: " hostname
 	case "$hostname" in
@@ -52,12 +52,12 @@ esac
 
 mkgpucpu () {
 #Install GPU drivers
-while :
+while true
 do
 	read -p "What type of graphics card are you using? (amd/intel/nvidia/NONE) " graphicschoice
 	case "$graphicschoice" in
 		amd|AMD|Amd) echo "Installing AMD drivers..."; 
-			while :
+			while true
 			do
 				read -p "AMDGPU or ATI? (AMDGPU/ATI) " archichoice
 				case "$archichoice" in
@@ -68,7 +68,7 @@ do
 			done;;
 		intel|INTEL|Intel) echo "Installing Intel drivers..."; pacman --noconfirm -S xf86-video-intel mesa lib32-mesa && ( break ) || ( exit 1 );;
 		nvidia|NVIDIA|Nvidia|NVidia) echo "Installing NVidia drivers...";
-			while :
+			while true
 			do
 				read -p "Open Source or Proprietary (open/proprietary) " nvchoice
 				case "$nvchoice" in
@@ -82,7 +82,7 @@ do
 done
 
 #Enable microcode updates
-while :
+while true
 do
 	read -p "What type of CPU are you using? (amd/intel) " cpuchoice
 	case "$cpuchoice" in
@@ -96,7 +96,7 @@ done
 
 mksudodoas () {
 #Ask if the user wants to install sudo or doas
-while :
+while true
 do
 	read -p "Which would you like to install: sudo or doas? (sudo/doas) " sudochoice
 	case "$sudochoice" in
@@ -119,7 +119,7 @@ mkuser () {
 read -p "Would you like to create a user? (Y/n) " userchoice
 case "$userchoice" in
 	n|N) usermade=0;;
-	*) while :;
+	*) while true;
 		do
 			read -p "Enter a username: " unchoice;
 			case "$unchoice" in
@@ -153,7 +153,7 @@ EOF
 mkgrub () {
 #Install bootloader
 pacman --noconfirm -S grub
-while :
+while true
 do
 	read -p "What is the path of your DISK (NOT a partition; e.g. input something like /dev/sdX)? " diskpath
 	case "$diskpath" in
@@ -162,7 +162,7 @@ do
 	esac
 done
 
-while :
+while true
 do
 	read -p "Do you have BIOS or UEFI? (bios/uefi) " grubchoice
 	case "$grubchoice" in
@@ -177,7 +177,7 @@ echo "Generating grub.cfg..."; grub-mkconfig -o /boot/grub/grub.cfg || exit 1
 
 case $1 in
 	--yay) unchoice=$2; mkyay && ( exit 0 ) || ( exit 1 );;
-	"") initial && mkhostname && mknetwork && mkgpucpu && mksudodoas && mkrootpasswd && mkgrub && mkuser && if [ $usermade -eq 1 ]; then 
+	"") initial && mkhostname && mknetwork && mkgpucpu && mksudodoas && mkrootpasswd && mkgrub && mkuser && if [ "$usermade" -eq 1 ]; then 
 		echo "$unchoice" > /unchoice && exit 0
 	else
 		exit 0

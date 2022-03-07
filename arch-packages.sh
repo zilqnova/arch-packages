@@ -23,7 +23,7 @@ if [ -f "/mnt/unchoice" ]; then
 	do
 		read -p "Enter password for $unchoice: " unchoicepasswd
 		read -p "Retype password: " unchoicepasswdcheck
-		if [ $unchoicepasswd = $unchoicepasswdcheck ]; then
+		if [ "$unchoicepasswd" = "$unchoicepasswdcheck" ]; then
 			break
 		else
 			echo "Error: passwords do not match."; continue
