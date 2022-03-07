@@ -4,6 +4,7 @@
 trap <exit 2> SIGINT SIGTERM
 
 #Enable multilib support
+initial () {
 echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 
 #Sync pacman
@@ -18,7 +19,9 @@ hwclock --systohc
 
 #Set locale to en_US.UTF-8 UTF-8
 echo "en_US.UTF8 UTF-8" > /etc/locale.gen && locale-gen && touch /etc/locale.conf && echo "LANG=en_US.UTF-8" > /etc/locale.conf
+}
 
+mkhostname () {
 #Create the hostname file
 while :
 do
@@ -28,7 +31,9 @@ do
 		*) echo $hostname > /etc/hostname; break;;
 	esac
 done
+}
 
+mknetwork () {
 #Enable Network
 systemctl enable dhcpcd.service
 read -p "Do you want to enable Wi-Fi? (Y/n) " networkchoice
@@ -43,7 +48,9 @@ case "$btchoice" in
 	n|N) :;;
 	*) echo "Enabling Bluetooth..."; pacman --noconfirm -S bluez bluez-utils && systemctl enable bluetooth.service;;
 esac
+}
 
+mkgpucpu () {
 #Install GPU drivers
 while :
 do
@@ -85,6 +92,9 @@ do
 	esac
 done
 
+}
+
+mksudodoas () {
 #Ask if the user wants to install sudo or doas
 while :
 do
@@ -95,26 +105,35 @@ do
 		*) echo "Please select either sudo or doas. Alternatively, press Ctrl+C to exit the script."; continue;;
 	esac
 done
+}
 
+mkrootpasswd () {
 #Set the root password
 echo "Set the root password:"
 passwd
+}
 
+#mkuser and mkyay are part of second run
+mkuser () {
 #Create a new user
 read -p "Would you like to create a user? (Y/n) " userchoice
 case "$userchoice" in
-	n|N) :;;
+	n|N) usermade=0;;
 	*) while :;
 		do
 			read -p "Enter a username: " unchoice;
 			case "$unchoice" in
 				"") echo "Entry cannot be blank."; continue;;
-				*) useradd -m -s $(which bash) -G wheel $unchoice && ( passwd $unchoice ) || ( echo "User failed to add."; continue );;
+				*) useradd -m -s $(which bash) -G wheel $unchoice && ( usermade=1 ) || ( echo "User failed to add."; continue );;
 			esac
 			break
-		done
+		done;;
+esac
+}
+
+mkyay () {
 #Install yay
-		cat >/home/$unchoice/yay.sh <<'EOFYAY'
+		cat >/home/$unchoice/yay.sh <<'EOF'
 #!/bin/bash
 trap <exit 2> SIGINT
 echo "Installing yay..."
@@ -125,12 +144,13 @@ makepkg -sri
 cd ..
 rm -rf yay
 exit 0
-EOFYAY
+EOF
 		chmod +x /home/$unchoice/yay.sh
 		su $unchoice -c /home/$unchoice/yay.sh
-		rm /home/$unchoice/yay.sh;;
-esac
+		rm /home/$unchoice/yay.sh
+}
 
+mkgrub () {
 #Install bootloader
 pacman --noconfirm -S grub
 while :
@@ -153,5 +173,14 @@ do
 done
 
 echo "Generating grub.cfg..."; grub-mkconfig -o /boot/grub/grub.cfg || exit 1
+}
 
-exit 0
+case $1 in
+	--yay) unchoice=$2; mkyay && ( exit 0 ) || ( exit 1 );;
+	"") initial && mkhostname && mknetwork && mkgpucpu && mksudodoas && mkrootpasswd && mkgrub && mkuser && if [ $usermade -eq 1 ]; then 
+		echo "$unchoice" > /unchoice && exit 0
+	else
+		exit 0
+	fi;;
+	*) echo "Unrecognized option. Accepted options are: --yay."; exit 1;;
+esac

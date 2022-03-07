@@ -13,6 +13,33 @@ genfstab -U /mnt >> /mnt/etc/fstab
 cp chroot-scripts/arch-packages-chroot.sh /mnt
 chmod +x /mnt/arch-packages-chroot.sh
 arch-chroot /mnt ./arch-packages-chroot.sh
+
+if [ -f "/mnt/unchoice" ]; then
+#Retrieve unchoice variable from arch-chroot session, then delete the file containing it
+	unchoice=$(cat /mnt/unchoice)
+	rm /mnt/unchoice
+	#Make user password
+	while true
+	do
+		read -p "Enter password for $unchoice: " unchoicepasswd
+		read -p "Retype password: " unchoicepasswdcheck
+		if [ $unchoicepasswd = $unchoicepasswdcheck ]; then
+			break
+		else
+			echo "Error: passwords do not match."; continue
+		fi
+	done
+	#Put decided password into chpasswd
+	echo "$unchoice:$unchoicepasswd" | arch-chroot /mnt chpasswd
+	#Install yay
+	arch-chroot /mnt ./arch-packages-chroot.sh --yay $unchoice
+	cleanup
+else
+	cleanup
+fi
+}
+
+cleanup () {
 rm /mnt/arch-packages-chroot.sh
 echo "Installation successful! You may now reboot into the system."
 exit 0
