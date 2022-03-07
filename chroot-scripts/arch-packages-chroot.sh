@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Allow Ctrl+C to escape script
+trap <exit 2> SIGINT SIGTERM
+
 #Enable multilib support
 echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 
@@ -110,8 +113,10 @@ case "$userchoice" in
 			esac
 			break
 		done
+#Install yay
 		cat >/home/$unchoice/yay.sh <<'EOFYAY'
 #!/bin/bash
+trap <exit 2> SIGINT
 echo "Installing yay..."
 cd ~
 git clone https://aur.archlinux.org/yay.git

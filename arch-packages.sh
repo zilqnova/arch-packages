@@ -18,6 +18,8 @@ echo "Installation successful! You may now reboot into the system."
 exit 0
 }
 
+#Allow Ctrl+C to escape script
+trap <exit 2> SIGINT SIGTERM
 #Check if PWD is arch-packages
 case "$PWD" in
 	*/arch-packages) install-arch;;
