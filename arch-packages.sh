@@ -21,8 +21,10 @@ if [ -f "/mnt/unchoice" ]; then
 	#Make user password
 	while true
 	do
-		read -p "Enter password for $unchoice: " unchoicepasswd
-		read -p "Retype password: " unchoicepasswdcheck
+		echo "Enter password for $unchoice"
+		read -s unchoicepasswd
+		echo "Retype password:"
+		read -s "Retype password: " unchoicepasswdcheck
 		if [ "$unchoicepasswd" = "$unchoicepasswdcheck" ]; then
 			break
 		else
