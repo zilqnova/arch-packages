@@ -124,7 +124,7 @@ case "$userchoice" in
 			read -p "Enter a username: " unchoice;
 			case "$unchoice" in
 				"") echo "Entry cannot be blank."; continue;;
-				*) useradd -m -s $(which bash) -G wheel $unchoice && ( usermade=1 ) || ( echo "User failed to add."; continue );;
+				*) usermade=1; useradd -m -s $(which bash) -G wheel $unchoice || ( echo "User failed to add."; continue );;
 			esac
 			break
 		done;;
@@ -177,7 +177,7 @@ echo "Generating grub.cfg..."; grub-mkconfig -o /boot/grub/grub.cfg || exit 1
 
 case $1 in
 	--yay) unchoice=$2; mkyay && ( exit 0 ) || ( exit 1 );;
-	"") initial && mkhostname && mknetwork && mkgpucpu && mksudodoas && mkrootpasswd && mkgrub && mkuser && if [ "$usermade" -eq 1 ]; then 
+	"") initial && mkhostname && mknetwork && mkgpucpu && mksudodoas && mkrootpasswd && mkgrub && mkuser && if [ $usermade -eq 1 ]; then 
 		echo "$unchoice" > /unchoice && exit 0
 	else
 		exit 0
