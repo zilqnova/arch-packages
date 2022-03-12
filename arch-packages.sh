@@ -24,7 +24,7 @@ if [ -f "/mnt/unchoice" ]; then
 		echo "Enter password for $unchoice"
 		read -s unchoicepasswd
 		echo "Retype password:"
-		read -s "Retype password: " unchoicepasswdcheck
+		read -s unchoicepasswdcheck
 		if [ "$unchoicepasswd" = "$unchoicepasswdcheck" ]; then
 			break
 		else
